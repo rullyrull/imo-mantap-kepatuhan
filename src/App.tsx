@@ -13,12 +13,24 @@ import NotFound from "./pages/NotFound";
 
 // Pasien Pages
 import PasienDashboard from "./pages/pasien/Dashboard";
+import PasienJadwal from "./pages/pasien/Jadwal";
+import PasienRiwayat from "./pages/pasien/Riwayat";
+import PasienPengingat from "./pages/pasien/Pengingat";
+import PasienProfil from "./pages/pasien/Profil";
 
 // Perawat Pages
 import PerawatDashboard from "./pages/perawat/Dashboard";
+import PerawatPasien from "./pages/perawat/Pasien";
+import PerawatPengobatan from "./pages/perawat/Pengobatan";
+import PerawatKepatuhan from "./pages/perawat/Kepatuhan";
+import PerawatProfil from "./pages/perawat/Profil";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
+import AdminPengguna from "./pages/admin/Pengguna";
+import AdminObat from "./pages/admin/Obat";
+import AdminLaporan from "./pages/admin/Laporan";
+import AdminPengaturan from "./pages/admin/Pengaturan";
 
 const queryClient = new QueryClient();
 
@@ -36,12 +48,24 @@ const App = () => (
           
           {/* Pasien Routes */}
           <Route path="/pasien/dashboard" element={<PasienDashboard />} />
+          <Route path="/pasien/jadwal" element={<PasienJadwal />} />
+          <Route path="/pasien/riwayat" element={<PasienRiwayat />} />
+          <Route path="/pasien/pengingat" element={<PasienPengingat />} />
+          <Route path="/pasien/profil" element={<PasienProfil />} />
           
           {/* Perawat Routes */}
           <Route path="/perawat/dashboard" element={<PerawatDashboard />} />
+          <Route path="/perawat/pasien" element={<PerawatPasien />} />
+          <Route path="/perawat/pengobatan" element={<PerawatPengobatan />} />
+          <Route path="/perawat/kepatuhan" element={<PerawatKepatuhan />} />
+          <Route path="/perawat/profil" element={<PerawatProfil />} />
           
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/pengguna" element={<AdminPengguna />} />
+          <Route path="/admin/obat" element={<AdminObat />} />
+          <Route path="/admin/laporan" element={<AdminLaporan />} />
+          <Route path="/admin/pengaturan" element={<AdminPengaturan />} />
           
           {/* 404 Not Found */}
           <Route path="*" element={<NotFound />} />
