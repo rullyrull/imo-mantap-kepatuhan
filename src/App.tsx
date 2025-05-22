@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -35,44 +36,46 @@ import AdminPengaturan from "./pages/admin/Pengaturan";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          
-          {/* Pasien Routes */}
-          <Route path="/pasien/dashboard" element={<PasienDashboard />} />
-          <Route path="/pasien/jadwal" element={<PasienJadwal />} />
-          <Route path="/pasien/riwayat" element={<PasienRiwayat />} />
-          <Route path="/pasien/pengingat" element={<PasienPengingat />} />
-          <Route path="/pasien/profil" element={<PasienProfil />} />
-          
-          {/* Perawat Routes */}
-          <Route path="/perawat/dashboard" element={<PerawatDashboard />} />
-          <Route path="/perawat/pasien" element={<PerawatPasien />} />
-          <Route path="/perawat/pengobatan" element={<PerawatPengobatan />} />
-          <Route path="/perawat/kepatuhan" element={<PerawatKepatuhan />} />
-          <Route path="/perawat/profil" element={<PerawatProfil />} />
-          
-          {/* Admin Routes */}
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/pengguna" element={<AdminPengguna />} />
-          <Route path="/admin/obat" element={<AdminObat />} />
-          <Route path="/admin/laporan" element={<AdminLaporan />} />
-          <Route path="/admin/pengaturan" element={<AdminPengaturan />} />
-          
-          {/* 404 Not Found */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            
+            {/* Pasien Routes */}
+            <Route path="/pasien/dashboard" element={<PasienDashboard />} />
+            <Route path="/pasien/jadwal" element={<PasienJadwal />} />
+            <Route path="/pasien/riwayat" element={<PasienRiwayat />} />
+            <Route path="/pasien/pengingat" element={<PasienPengingat />} />
+            <Route path="/pasien/profil" element={<PasienProfil />} />
+            
+            {/* Perawat Routes */}
+            <Route path="/perawat/dashboard" element={<PerawatDashboard />} />
+            <Route path="/perawat/pasien" element={<PerawatPasien />} />
+            <Route path="/perawat/pengobatan" element={<PerawatPengobatan />} />
+            <Route path="/perawat/kepatuhan" element={<PerawatKepatuhan />} />
+            <Route path="/perawat/profil" element={<PerawatProfil />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/pengguna" element={<AdminPengguna />} />
+            <Route path="/admin/obat" element={<AdminObat />} />
+            <Route path="/admin/laporan" element={<AdminLaporan />} />
+            <Route path="/admin/pengaturan" element={<AdminPengaturan />} />
+            
+            {/* 404 Not Found */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </React.StrictMode>
 );
 
 export default App;

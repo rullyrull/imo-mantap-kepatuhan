@@ -11,7 +11,7 @@ import {
   User, 
   Users, 
   Heart, 
-  PillBottle,
+  Pill,
   Settings, 
   Menu
 } from 'lucide-react';
@@ -41,14 +41,14 @@ const Sidebar = ({ role, isMobile = false, onClose }: SidebarProps) => {
     perawat: [
       { name: 'Dashboard', path: '/perawat/dashboard', icon: <BarChart3 className="h-5 w-5" /> },
       { name: 'Pasien', path: '/perawat/pasien', icon: <Users className="h-5 w-5" /> },
-      { name: 'Pengobatan', path: '/perawat/pengobatan', icon: <PillBottle className="h-5 w-5" /> },
+      { name: 'Pengobatan', path: '/perawat/pengobatan', icon: <Pill className="h-5 w-5" /> },
       { name: 'Kepatuhan', path: '/perawat/kepatuhan', icon: <Heart className="h-5 w-5" /> },
       { name: 'Profil', path: '/perawat/profil', icon: <User className="h-5 w-5" /> },
     ],
     admin: [
       { name: 'Dashboard', path: '/admin/dashboard', icon: <BarChart3 className="h-5 w-5" /> },
       { name: 'Pengguna', path: '/admin/pengguna', icon: <Users className="h-5 w-5" /> },
-      { name: 'Obat', path: '/admin/obat', icon: <PillBottle className="h-5 w-5" /> },
+      { name: 'Obat', path: '/admin/obat', icon: <Pill className="h-5 w-5" /> },
       { name: 'Laporan', path: '/admin/laporan', icon: <Calendar className="h-5 w-5" /> },
       { name: 'Pengaturan', path: '/admin/pengaturan', icon: <Settings className="h-5 w-5" /> },
     ],
@@ -70,7 +70,7 @@ const Sidebar = ({ role, isMobile = false, onClose }: SidebarProps) => {
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center">
           <div className="rounded-full bg-imo-500 w-8 h-8 flex items-center justify-center">
-            <PillBottle className="h-5 w-5 text-white" />
+            <Pill className="h-5 w-5 text-white" />
           </div>
           <span className="ml-2 font-semibold text-lg">IMO MANTAP</span>
         </div>

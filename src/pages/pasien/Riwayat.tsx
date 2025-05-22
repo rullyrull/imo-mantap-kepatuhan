@@ -2,7 +2,7 @@
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, Heart, ArrowUp, ArrowDown, LineChart } from 'lucide-react';
+import { Calendar, Heart, ArrowUp, ArrowDown, LineChart, Pill } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const PasienRiwayat = () => {
@@ -85,7 +85,7 @@ const PasienRiwayat = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <PillBottle className="mr-2 h-5 w-5" />
+                  <Pill className="mr-2 h-5 w-5" />
                   Riwayat Pengobatan
                 </CardTitle>
                 <CardDescription>
