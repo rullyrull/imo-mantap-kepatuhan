@@ -1,19 +1,27 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PillBottle, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Pill, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 const PasienJadwal = () => {
   // Dummy data
-  const jadwalObat = [
+  const [jadwalObat, setJadwalObat] = useState([
     { id: 1, nama: 'Amlodipine', dosis: '10mg', waktu: '07:00', status: 'selesai' },
     { id: 2, nama: 'Ramipril', dosis: '5mg', waktu: '12:00', status: 'aktif' },
     { id: 3, nama: 'Losartan', dosis: '50mg', waktu: '19:00', status: 'aktif' },
     { id: 4, nama: 'Metformin', dosis: '500mg', waktu: '08:00', status: 'selesai' },
     { id: 5, nama: 'Atorvastatin', dosis: '20mg', waktu: '20:00', status: 'aktif' },
-  ];
+  ]);
+
+  const tandaiSelesai = (id: number) => {
+    setJadwalObat(jadwalObat.map(obat => 
+      obat.id === id ? { ...obat, status: 'selesai' } : obat
+    ));
+    toast.success('Obat berhasil ditandai selesai');
+  };
 
   return (
     <Layout role="pasien" title="Jadwal Obat">
@@ -52,7 +60,7 @@ const PasienJadwal = () => {
                     </div>
                   </div>
                   {obat.status === 'aktif' && (
-                    <Button size="sm">
+                    <Button size="sm" onClick={() => tandaiSelesai(obat.id)}>
                       Tandai Selesai
                     </Button>
                   )}
@@ -68,7 +76,7 @@ const PasienJadwal = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <PillBottle className="mr-2 h-5 w-5" />
+              <Pill className="mr-2 h-5 w-5" />
               Ringkasan Obat
             </CardTitle>
           </CardHeader>

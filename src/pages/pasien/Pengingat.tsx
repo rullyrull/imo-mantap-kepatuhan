@@ -6,6 +6,7 @@ import { Bell, Plus, X, Calendar, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 const PasienPengingat = () => {
   // Dummy data
@@ -44,6 +45,27 @@ const PasienPengingat = () => {
     setPengingat(pengingat.map(item => 
       item.id === id ? { ...item, aktif: !item.aktif } : item
     ));
+    toast.success('Status pengingat berhasil diubah');
+  };
+
+  const handleDelete = (id: number) => {
+    setPengingat(pengingat.filter(item => item.id !== id));
+    toast.success('Pengingat berhasil dihapus');
+  };
+
+  const handleAddPengingat = () => {
+    const newId = Math.max(0, ...pengingat.map(item => item.id)) + 1;
+    setPengingat([
+      ...pengingat,
+      {
+        id: newId,
+        judul: 'Pengingat Baru',
+        waktu: '12:00',
+        hari: ['Senin', 'Rabu', 'Jumat'],
+        aktif: true
+      }
+    ]);
+    toast.success('Pengingat baru berhasil ditambahkan');
   };
 
   return (
@@ -51,7 +73,7 @@ const PasienPengingat = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">Pengaturan Pengingat</h2>
-          <Button>
+          <Button onClick={handleAddPengingat}>
             <Plus className="mr-1 h-4 w-4" />
             Tambah Pengingat
           </Button>
@@ -91,7 +113,12 @@ const PasienPengingat = () => {
                       checked={item.aktif} 
                       onCheckedChange={() => togglePengingat(item.id)} 
                     />
-                    <Button variant="ghost" size="icon" className="text-red-500">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="text-red-500" 
+                      onClick={() => handleDelete(item.id)}
+                    >
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
@@ -111,7 +138,7 @@ const PasienPengingat = () => {
                 <h4 className="font-medium">Notifikasi Pengingat</h4>
                 <p className="text-sm text-muted-foreground">Aktifkan notifikasi untuk pengingat</p>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked onChange={() => toast.success('Pengaturan notifikasi diubah')} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -119,7 +146,7 @@ const PasienPengingat = () => {
                 <h4 className="font-medium">Notifikasi Berulang</h4>
                 <p className="text-sm text-muted-foreground">Kirim pengingat beberapa kali</p>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked onChange={() => toast.success('Pengaturan notifikasi berulang diubah')} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -127,7 +154,7 @@ const PasienPengingat = () => {
                 <h4 className="font-medium">Pengingat Dokter</h4>
                 <p className="text-sm text-muted-foreground">Aktifkan pengingat jadwal dokter</p>
               </div>
-              <Switch />
+              <Switch onChange={() => toast.success('Pengaturan pengingat dokter diubah')} />
             </div>
           </CardContent>
         </Card>

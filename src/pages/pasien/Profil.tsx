@@ -2,9 +2,10 @@
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Phone, Mail, Home, CalendarDays, Heart, Edit, Shield } from 'lucide-react';
+import { User, Phone, Mail, Home, CalendarDays, Heart, Edit, Shield, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
 const PasienProfil = () => {
   // Dummy data
@@ -19,6 +20,10 @@ const PasienProfil = () => {
     golonganDarah: 'O+',
     kondisiMedis: ['Hipertensi', 'Diabetes Tipe 2'],
     alergi: ['Penisilin', 'Kacang']
+  };
+
+  const handleAction = (action: string) => {
+    toast.success(`Aksi "${action}" berhasil dilakukan`);
   };
 
   return (
@@ -36,7 +41,11 @@ const PasienProfil = () => {
                   Informasi pribadi dan riwayat kesehatan
                 </CardDescription>
               </div>
-              <Button variant="outline" size="sm">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleAction('Edit Profil')}
+              >
                 <Edit className="h-4 w-4 mr-1" />
                 Edit Profil
               </Button>
@@ -115,30 +124,89 @@ const PasienProfil = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Shield className="mr-2 h-5 w-5" />
-              Pengaturan Akun
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Button variant="outline" className="w-full justify-start">
-                Ubah Kata Sandi
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                Preferensi Notifikasi
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                Manajemen Perangkat
-              </Button>
-              <Button variant="outline" className="w-full justify-start text-red-500 hover:text-red-500 hover:bg-red-50">
-                Hapus Akun
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Shield className="mr-2 h-5 w-5" />
+                Keamanan Akun
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Ubah Kata Sandi')}
+                >
+                  Ubah Kata Sandi
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Verifikasi Dua Faktor')}
+                >
+                  Verifikasi Dua Faktor
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Pemulihan Akun')}
+                >
+                  Pemulihan Akun
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Manajemen Perangkat')}
+                >
+                  Manajemen Perangkat
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start text-red-500 hover:text-red-500 hover:bg-red-50"
+                  onClick={() => handleAction('Hapus Akun')}
+                >
+                  Hapus Akun
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Settings className="mr-2 h-5 w-5" />
+                Pengaturan
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Preferensi Notifikasi')}
+                >
+                  Preferensi Notifikasi
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Tema Aplikasi')}
+                >
+                  Tema Aplikasi
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Bahasa')}
+                >
+                  Bahasa
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </Layout>
   );

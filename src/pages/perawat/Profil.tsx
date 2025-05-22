@@ -2,10 +2,11 @@
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Phone, Mail, Briefcase, Clock, Edit, Shield, Settings } from 'lucide-react';
+import { User, Phone, Mail, Briefcase, Clock, Edit, Shield, Settings, BadgeCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 const PerawatProfil = () => {
   // Dummy data
@@ -27,6 +28,10 @@ const PerawatProfil = () => {
     keahlian: ['Manajemen Hipertensi', 'Pendidikan Pasien', 'Perawatan Diabetes']
   };
 
+  const handleAction = (action: string) => {
+    toast.success(`Aksi "${action}" berhasil dilakukan`);
+  };
+
   return (
     <Layout role="perawat" title="Profil">
       <div className="space-y-6">
@@ -42,7 +47,7 @@ const PerawatProfil = () => {
                   Informasi pribadi dan data profesional
                 </CardDescription>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => handleAction('Edit Profil')}>
                 <Edit className="h-4 w-4 mr-1" />
                 Edit Profil
               </Button>
@@ -134,13 +139,25 @@ const PerawatProfil = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Ubah Kata Sandi')}
+                >
                   Ubah Kata Sandi
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Verifikasi Dua Faktor')}
+                >
                   Verifikasi Dua Faktor
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Pemulihan Akun')}
+                >
                   Pemulihan Akun
                 </Button>
               </div>
@@ -156,14 +173,33 @@ const PerawatProfil = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Preferensi Notifikasi')}
+                >
                   Preferensi Notifikasi
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Tema Aplikasi')}
+                >
                   Tema Aplikasi
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => handleAction('Bahasa')}
+                >
                   Bahasa
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start text-red-500 hover:text-red-500 hover:bg-red-50"
+                  onClick={() => handleAction('Hapus Akun')}
+                >
+                  Hapus Akun
                 </Button>
               </div>
             </CardContent>

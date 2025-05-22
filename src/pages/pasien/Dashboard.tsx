@@ -1,22 +1,23 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { CalendarClock, Heart, Clock, Pill, Plus, LineChart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const PasienDashboard = () => {
   const navigate = useNavigate();
   
   // Dummy data
   const kepatuhan = 85;
-  const obatHariIni = [
+  const [obatHariIni, setObatHariIni] = useState([
     { id: 1, nama: 'Amlodipine', dosis: '10mg', waktu: '07:00', status: 'done' },
     { id: 2, nama: 'Ramipril', dosis: '5mg', waktu: '12:00', status: 'upcoming' },
     { id: 3, nama: 'Losartan', dosis: '50mg', waktu: '19:00', status: 'upcoming' },
-  ];
+  ]);
   
   const tekananDarah = [
     { tanggal: '18 Mei', sistol: 140, diastol: 90 },
@@ -25,6 +26,26 @@ const PasienDashboard = () => {
     { tanggal: '21 Mei', sistol: 132, diastol: 84 },
     { tanggal: '22 Mei', sistol: 130, diastol: 82 },
   ];
+
+  const handleObatSelesai = (id: number) => {
+    setObatHariIni(obatHariIni.map(obat => 
+      obat.id === id ? { ...obat, status: 'done' } : obat
+    ));
+    toast.success('Obat berhasil ditandai sebagai selesai');
+  };
+
+  const handleAction = (action: string) => {
+    toast.success(`Aksi "${action}" berhasil dilakukan`);
+    
+    // Navigate to appropriate pages based on action
+    if (action === "Jadwal Konsultasi") {
+      navigate('/pasien/jadwal');
+    } else if (action === "Tambah Pengingat") {
+      navigate('/pasien/pengingat');
+    } else if (action === "Laporan Kesehatan") {
+      navigate('/pasien/riwayat');
+    }
+  };
 
   return (
     <Layout role="pasien" title="Dashboard Pasien">
@@ -85,6 +106,7 @@ const PasienDashboard = () => {
                       variant={obat.status === 'done' ? "ghost" : "outline"} 
                       size="sm"
                       disabled={obat.status === 'done'}
+                      onClick={() => handleObatSelesai(obat.id)}
                     >
                       {obat.status === 'done' ? 'Selesai' : 'Tandai'}
                     </Button>
@@ -116,7 +138,12 @@ const PasienDashboard = () => {
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
                 <span>Catatan Kesehatan</span>
-                <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  className="h-8 w-8 p-0"
+                  onClick={() => toast.success('Catatan kesehatan baru ditambahkan')}
+                >
                   <Plus className="h-4 w-4" />
                 </Button>
               </CardTitle>
@@ -131,7 +158,12 @@ const PasienDashboard = () => {
                   <div className="text-sm text-muted-foreground">17 Mei 2025</div>
                   <div className="mt-1">Hari ini merasa lebih baik. Telah berjalan kaki selama 30 menit.</div>
                 </div>
-                <Button variant="outline" size="sm" className="w-full">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => navigate('/pasien/riwayat')}
+                >
                   Lihat Semua Catatan
                 </Button>
               </div>
@@ -146,19 +178,35 @@ const PasienDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Button variant="outline" className="h-auto flex-col p-4 gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto flex-col p-4 gap-2"
+                onClick={() => handleAction('Jadwal Konsultasi')}
+              >
                 <CalendarClock className="h-6 w-6" />
                 <span>Jadwal Konsultasi</span>
               </Button>
-              <Button variant="outline" className="h-auto flex-col p-4 gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto flex-col p-4 gap-2"
+                onClick={() => handleAction('Tambah Pengingat')}
+              >
                 <Pill className="h-6 w-6" />
                 <span>Tambah Pengingat</span>
               </Button>
-              <Button variant="outline" className="h-auto flex-col p-4 gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto flex-col p-4 gap-2" 
+                onClick={() => handleAction('Catat Tekanan Darah')}
+              >
                 <Heart className="h-6 w-6" />
                 <span>Catat Tekanan Darah</span>
               </Button>
-              <Button variant="outline" className="h-auto flex-col p-4 gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto flex-col p-4 gap-2"
+                onClick={() => handleAction('Laporan Kesehatan')}
+              >
                 <LineChart className="h-6 w-6" />
                 <span>Laporan Kesehatan</span>
               </Button>
