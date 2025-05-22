@@ -1,14 +1,20 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { PillBottle, Plus, Clock, Search, Calendar, AlertCircle } from 'lucide-react';
+import { Pill, Plus, Clock, Search, Calendar, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const PerawatPengobatan = () => {
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('jadwal');
+
   // Dummy data
   const daftarObat = [
     { id: 1, nama: 'Amlodipine', jenisObat: 'Antihipertensi', dosis: '5mg, 10mg', stok: 120 },
@@ -22,6 +28,7 @@ const PerawatPengobatan = () => {
     { 
       id: 1, 
       pasien: 'Budi Santoso', 
+      pasienId: 1,
       obat: 'Amlodipine 10mg', 
       waktu: '07:00', 
       tanggal: '22 Mei 2025',
@@ -30,6 +37,7 @@ const PerawatPengobatan = () => {
     { 
       id: 2, 
       pasien: 'Siti Aminah', 
+      pasienId: 2,
       obat: 'Metformin 500mg', 
       waktu: '08:00', 
       tanggal: '22 Mei 2025',
@@ -38,6 +46,7 @@ const PerawatPengobatan = () => {
     { 
       id: 3, 
       pasien: 'Joko Widodo', 
+      pasienId: 3,
       obat: 'Losartan 50mg', 
       waktu: '12:00', 
       tanggal: '22 Mei 2025',
@@ -46,6 +55,7 @@ const PerawatPengobatan = () => {
     { 
       id: 4, 
       pasien: 'Sri Mulyani', 
+      pasienId: 4,
       obat: 'Atorvastatin 20mg', 
       waktu: '19:00', 
       tanggal: '22 Mei 2025',
@@ -54,6 +64,7 @@ const PerawatPengobatan = () => {
     { 
       id: 5, 
       pasien: 'Ahmad Dahlan', 
+      pasienId: 5,
       obat: 'Ramipril 5mg', 
       waktu: '20:00', 
       tanggal: '22 Mei 2025',
@@ -61,25 +72,59 @@ const PerawatPengobatan = () => {
     },
   ];
 
+  const handleTandaiSelesai = (id: number) => {
+    toast.success('Pengobatan telah ditandai selesai');
+  };
+
+  const handleUpdateStok = (id: number) => {
+    toast.success('Stok obat berhasil diperbarui');
+  };
+
+  const handleLihatDetail = (pasienId: number) => {
+    navigate(`/perawat/pasien/${pasienId}`);
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.info(`Mencari: ${searchTerm}`);
+  };
+
+  const handleTambahBaru = () => {
+    if (activeTab === 'jadwal') {
+      toast.success('Menambahkan jadwal pemberian obat baru');
+    } else {
+      toast.success('Menambahkan obat baru ke inventaris');
+    }
+  };
+
+  const handleRestockObat = () => {
+    toast.success('Permintaan restock obat telah dikirim');
+  };
+
   return (
     <Layout role="perawat" title="Pengobatan">
-      <Tabs defaultValue="jadwal" className="space-y-6">
+      <Tabs defaultValue="jadwal" className="space-y-6" onValueChange={setActiveTab}>
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <TabsList>
             <TabsTrigger value="jadwal">Jadwal Pemberian</TabsTrigger>
             <TabsTrigger value="obat">Daftar Obat</TabsTrigger>
           </TabsList>
           
-          <div className="flex items-center gap-2">
+          <form onSubmit={handleSearch} className="flex items-center gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Cari..." className="pl-10" />
+              <Input 
+                placeholder="Cari..." 
+                className="pl-10" 
+                value={searchTerm} 
+                onChange={(e) => setSearchTerm(e.target.value)} 
+              />
             </div>
-            <Button>
+            <Button onClick={handleTambahBaru}>
               <Plus className="h-4 w-4 mr-1" />
               Tambah Baru
             </Button>
-          </div>
+          </form>
         </div>
         
         <TabsContent value="jadwal">
@@ -98,9 +143,12 @@ const PerawatPengobatan = () => {
                 {jadwalPemberian.map((jadwal) => (
                   <div key={jadwal.id} className="flex items-center justify-between border-b pb-4 last:border-0">
                     <div>
-                      <div className="font-medium">{jadwal.pasien}</div>
+                      <div className="font-medium cursor-pointer" 
+                           onClick={() => handleLihatDetail(jadwal.pasienId)}>
+                        {jadwal.pasien}
+                      </div>
                       <div className="flex items-center text-sm mt-1">
-                        <PillBottle className="h-4 w-4 mr-1 text-imo-500" />
+                        <Pill className="h-4 w-4 mr-1 text-primary" />
                         <span>{jadwal.obat}</span>
                       </div>
                       <div className="flex items-center text-sm text-muted-foreground mt-1">
@@ -117,7 +165,12 @@ const PerawatPengobatan = () => {
                       }`}>
                         {jadwal.status === 'selesai' ? 'Selesai' : 'Terjadwal'}
                       </Badge>
-                      <Button variant="outline" size="sm" disabled={jadwal.status === 'selesai'}>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        disabled={jadwal.status === 'selesai'}
+                        onClick={() => jadwal.status !== 'selesai' && handleTandaiSelesai(jadwal.id)}
+                      >
                         {jadwal.status === 'selesai' ? 'Sudah Diberikan' : 'Tandai Selesai'}
                       </Button>
                     </div>
@@ -132,7 +185,7 @@ const PerawatPengobatan = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <PillBottle className="h-5 w-5 mr-2" />
+                <Pill className="h-5 w-5 mr-2" />
                 Daftar Obat
               </CardTitle>
               <CardDescription>
@@ -162,7 +215,7 @@ const PerawatPengobatan = () => {
                           {obat.stok} unit
                         </div>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => handleUpdateStok(obat.id)}>
                         Update Stok
                       </Button>
                     </div>
@@ -195,7 +248,7 @@ const PerawatPengobatan = () => {
                     <span className="font-medium text-amber-500">60 unit</span>
                   </li>
                 </ul>
-                <Button className="w-full mt-4" size="sm">
+                <Button className="w-full mt-4" size="sm" onClick={handleRestockObat}>
                   Restock Obat
                 </Button>
               </div>

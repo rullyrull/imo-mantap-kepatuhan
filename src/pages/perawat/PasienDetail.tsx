@@ -1,14 +1,18 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { 
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
   User, Heart, Pill, Calendar, Clock, Phone, 
-  AlertTriangle, CheckCircle, LineChart, Plus
+  AlertTriangle, CheckCircle, LineChart, Plus,
+  Bell
 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
@@ -17,6 +21,11 @@ const PerawatPasienDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const pasienId = parseInt(id || '0');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogType, setDialogType] = useState('');
+  const [tekananDarah, setTekananDarah] = useState('');
+  const [reminderTime, setReminderTime] = useState('');
+  const [reminderMessage, setReminderMessage] = useState('');
   
   // Dummy data - in a real app, you'd fetch this from your backend
   const pasien = {
@@ -43,23 +52,283 @@ const PerawatPasienDetail = () => {
   };
 
   const handleKembali = () => {
-    navigate(-1);
+    navigate('/perawat/pasien');
   };
 
   const handleContact = () => {
-    toast.info(`Menghubungi ${pasien.nama} pada nomor ${pasien.telepon}`);
+    setDialogType('hubungi-pasien');
+    setDialogOpen(true);
+  };
+
+  const handleCatatKepatuhan = () => {
+    setDialogType('catat-kepatuhan');
+    setDialogOpen(true);
   };
 
   const handleUpdatePengingat = () => {
-    toast.success('Pengingat berhasil diperbarui');
+    setDialogType('update-pengingat');
+    setDialogOpen(true);
   };
 
-  const handleSetReminder = () => {
-    toast.success('Pengingat berhasil ditambahkan');
+  const handleSetReminder = (obatId: number) => {
+    setDialogType('set-reminder');
+    setDialogOpen(true);
+  };
+
+  const handleTekananDarah = () => {
+    setDialogType('tekanan-darah');
+    setDialogOpen(true);
   };
 
   const handleAddObat = () => {
-    toast.info('Menambahkan obat baru');
+    setDialogType('tambah-obat');
+    setDialogOpen(true);
+  };
+
+  const handleDialogSave = () => {
+    switch(dialogType) {
+      case 'hubungi-pasien':
+        toast.success(`Menghubungi ${pasien.nama} pada nomor ${pasien.telepon}`);
+        break;
+      case 'catat-kepatuhan':
+        toast.success(`Kepatuhan pasien ${pasien.nama} berhasil dicatat`);
+        break;
+      case 'update-pengingat':
+        toast.success('Pengingat berhasil diperbarui');
+        break;
+      case 'set-reminder':
+        if (!reminderTime) {
+          toast.error('Waktu pengingat harus diisi');
+          return;
+        }
+        toast.success('Pengingat berhasil ditambahkan');
+        setReminderTime('');
+        setReminderMessage('');
+        break;
+      case 'tekanan-darah':
+        if (!tekananDarah) {
+          toast.error('Tekanan darah harus diisi');
+          return;
+        }
+        toast.success(`Tekanan darah ${tekananDarah} mmHg berhasil dicatat`);
+        setTekananDarah('');
+        break;
+      case 'tambah-obat':
+        toast.success('Obat baru berhasil ditambahkan');
+        break;
+    }
+    setDialogOpen(false);
+  };
+
+  const renderDialogContent = () => {
+    switch(dialogType) {
+      case 'hubungi-pasien':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Hubungi Pasien</DialogTitle>
+              <DialogDescription>
+                Pilih metode untuk menghubungi {pasien.nama}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-3">
+              <Button variant="outline" className="w-full justify-start" onClick={() => toast.success(`Menghubungi ${pasien.telepon}`)}>
+                <Phone className="h-4 w-4 mr-2" />
+                Telepon ({pasien.telepon})
+              </Button>
+              <Button variant="outline" className="w-full justify-start">
+                <Mail className="h-4 w-4 mr-2" />
+                Kirim Pesan
+              </Button>
+              <Button variant="outline" className="w-full justify-start">
+                <Bell className="h-4 w-4 mr-2" />
+                Kirim Notifikasi
+              </Button>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Hubungi</Button>
+            </DialogFooter>
+          </>
+        );
+      case 'catat-kepatuhan':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Catat Kepatuhan Minum Obat</DialogTitle>
+              <DialogDescription>
+                Catat kepatuhan minum obat untuk {pasien.nama}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+              {pasien.jadwalObat.map((obat) => (
+                <div key={obat.id} className="flex items-center justify-between border-b pb-3">
+                  <div>
+                    <p className="font-medium">{obat.nama} {obat.dosis}</p>
+                    <p className="text-sm text-muted-foreground">{obat.waktu} • {obat.hari}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => toast.success(`${obat.nama} ditandai tidak diminum`)}>
+                      <AlertTriangle className="h-4 w-4 mr-1 text-red-500" />
+                      Tidak
+                    </Button>
+                    <Button size="sm" onClick={() => toast.success(`${obat.nama} ditandai diminum`)}>
+                      <CheckCircle className="h-4 w-4 mr-1" />
+                      Diminum
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Simpan</Button>
+            </DialogFooter>
+          </>
+        );
+      case 'update-pengingat':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Sesuaikan Pengingat</DialogTitle>
+              <DialogDescription>
+                Atur jadwal pengingat obat untuk {pasien.nama}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+              {pasien.jadwalObat.map((obat) => (
+                <div key={obat.id} className="border rounded-md p-4">
+                  <p className="font-medium">{obat.nama} {obat.dosis}</p>
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    <div>
+                      <Label>Waktu Pengingat</Label>
+                      <Input type="time" defaultValue={obat.waktu} />
+                    </div>
+                    <div>
+                      <Label>Frekuensi</Label>
+                      <select className="w-full h-10 rounded-md border border-input px-3 py-2">
+                        <option>Setiap hari</option>
+                        <option>Setiap 12 jam</option>
+                        <option>Setiap 8 jam</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Simpan Pengaturan</Button>
+            </DialogFooter>
+          </>
+        );
+      case 'set-reminder':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Atur Pengingat</DialogTitle>
+              <DialogDescription>
+                Tambahkan pengingat untuk pasien
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+              <div>
+                <Label htmlFor="reminder-time">Waktu Pengingat</Label>
+                <Input 
+                  id="reminder-time" 
+                  type="time" 
+                  value={reminderTime} 
+                  onChange={(e) => setReminderTime(e.target.value)} 
+                />
+              </div>
+              <div>
+                <Label htmlFor="reminder-message">Pesan Pengingat (opsional)</Label>
+                <Input 
+                  id="reminder-message" 
+                  placeholder="Jangan lupa minum obat Anda" 
+                  value={reminderMessage} 
+                  onChange={(e) => setReminderMessage(e.target.value)} 
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Simpan Pengingat</Button>
+            </DialogFooter>
+          </>
+        );
+      case 'tekanan-darah':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Catat Tekanan Darah</DialogTitle>
+              <DialogDescription>
+                Catat tekanan darah untuk {pasien.nama}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <Label htmlFor="blood-pressure">Tekanan Darah (mmHg)</Label>
+              <div className="flex gap-3 mt-1">
+                <Input 
+                  id="blood-pressure" 
+                  placeholder="Contoh: 120/80" 
+                  value={tekananDarah}
+                  onChange={(e) => setTekananDarah(e.target.value)}
+                />
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                Tekanan darah terakhir: {pasien.tekananDarah} mmHg
+              </p>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Simpan</Button>
+            </DialogFooter>
+          </>
+        );
+      case 'tambah-obat':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Tambah Obat Baru</DialogTitle>
+              <DialogDescription>
+                Tambahkan obat baru untuk {pasien.nama}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+              <div>
+                <Label htmlFor="med-name">Nama Obat</Label>
+                <Input id="med-name" placeholder="Nama obat" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="med-dose">Dosis</Label>
+                  <Input id="med-dose" placeholder="Contoh: 10mg" />
+                </div>
+                <div>
+                  <Label htmlFor="med-time">Waktu</Label>
+                  <Input id="med-time" type="time" />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="med-frequency">Frekuensi</Label>
+                <select id="med-frequency" className="w-full h-10 rounded-md border border-input px-3 py-2">
+                  <option>Setiap hari</option>
+                  <option>Setiap 12 jam</option>
+                  <option>Setiap 8 jam</option>
+                  <option>Lainnya</option>
+                </select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Tambah Obat</Button>
+            </DialogFooter>
+          </>
+        );
+      default:
+        return <p>Content not available</p>;
+    }
   };
 
   return (
@@ -74,7 +343,7 @@ const PerawatPasienDetail = () => {
               <Phone className="h-4 w-4 mr-2" />
               Hubungi Pasien
             </Button>
-            <Button>
+            <Button onClick={handleCatatKepatuhan}>
               <Plus className="h-4 w-4 mr-2" />
               Catat Kepatuhan
             </Button>
@@ -162,7 +431,7 @@ const PerawatPasienDetail = () => {
                     <span className="text-sm text-red-500 font-medium">Di atas batas normal</span>
                     
                     <div className="mt-4">
-                      <Button onClick={() => toast.info('Mencatat tekanan darah baru')}>
+                      <Button onClick={handleTekananDarah}>
                         Catat Tekanan Darah
                       </Button>
                     </div>
@@ -201,7 +470,7 @@ const PerawatPasienDetail = () => {
                   <TableRow key={obat.id}>
                     <TableCell>
                       <div className="flex items-center">
-                        <Pill className="h-4 w-4 mr-2 text-imo-500" />
+                        <Pill className="h-4 w-4 mr-2 text-primary" />
                         {obat.nama}
                       </div>
                     </TableCell>
@@ -209,7 +478,7 @@ const PerawatPasienDetail = () => {
                     <TableCell>{obat.waktu}</TableCell>
                     <TableCell>{obat.hari}</TableCell>
                     <TableCell>
-                      <Button size="sm" variant="ghost" onClick={handleSetReminder}>
+                      <Button size="sm" variant="ghost" onClick={() => handleSetReminder(obat.id)}>
                         <Clock className="h-4 w-4 mr-1" />
                         Atur Pengingat
                       </Button>
@@ -296,6 +565,13 @@ const PerawatPasienDetail = () => {
           </Button>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          {renderDialogContent()}
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };

@@ -1,13 +1,17 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search, User, UserPlus, Filter, Heart } from 'lucide-react';
+import { toast } from 'sonner';
 
 const PerawatPasien = () => {
+  const navigate = useNavigate();
+  
   // Dummy data
   const daftarPasien = [
     { 
@@ -57,21 +61,38 @@ const PerawatPasien = () => {
     }
   ];
 
+  const handleLihatDetail = (pasienId: number) => {
+    navigate(`/perawat/pasien/${pasienId}`);
+  };
+
+  const handleAddPasien = () => {
+    toast.success('Fitur tambah pasien akan segera tersedia');
+  };
+
+  const handleFilter = () => {
+    toast.info('Fitur filter pasien akan segera tersedia');
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.info('Pencarian pasien akan segera tersedia');
+  };
+
   return (
     <Layout role="perawat" title="Daftar Pasien">
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="relative w-full md:w-64">
+          <form onSubmit={handleSearch} className="relative w-full md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Cari pasien..." className="pl-10" />
-          </div>
+          </form>
           
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={handleFilter}>
               <Filter className="h-4 w-4 mr-1" />
               Filter
             </Button>
-            <Button>
+            <Button onClick={handleAddPasien}>
               <UserPlus className="h-4 w-4 mr-1" />
               Tambah Pasien
             </Button>
@@ -82,7 +103,7 @@ const PerawatPasien = () => {
           <CardHeader>
             <CardTitle>Daftar Pasien</CardTitle>
             <CardDescription>
-              Total 5 pasien terdaftar
+              Total {daftarPasien.length} pasien terdaftar
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -132,7 +153,7 @@ const PerawatPasien = () => {
                         <span className="font-bold">{pasien.kepatuhan}%</span>
                       </div>
                     </div>
-                    <Button>Lihat Detail</Button>
+                    <Button onClick={() => handleLihatDetail(pasien.id)}>Lihat Detail</Button>
                   </div>
                 </div>
               ))}

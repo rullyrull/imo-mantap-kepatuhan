@@ -1,14 +1,30 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Phone, Mail, Briefcase, Clock, Edit, Shield, Settings, BadgeCheck } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { User, Phone, Mail, Briefcase, Clock, Edit, Shield, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
 
 const PerawatProfil = () => {
+  // State for dialog visibility
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogType, setDialogType] = useState<string>('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  
+  // Notifications settings
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [appNotifications, setAppNotifications] = useState(true);
+  
   // Dummy data
   const profil = {
     nama: 'Dr. Anita Wijaya',
@@ -29,7 +45,335 @@ const PerawatProfil = () => {
   };
 
   const handleAction = (action: string) => {
-    toast.success(`Aksi "${action}" berhasil dilakukan`);
+    switch(action) {
+      case 'Edit Profil':
+        setDialogType('edit-profil');
+        setDialogOpen(true);
+        break;
+      case 'Ubah Kata Sandi':
+        setDialogType('ubah-password');
+        setDialogOpen(true);
+        break;
+      case 'Verifikasi Dua Faktor':
+        setDialogType('two-factor');
+        setDialogOpen(true);
+        break;
+      case 'Pemulihan Akun':
+        setDialogType('recovery');
+        setDialogOpen(true);
+        break;
+      case 'Preferensi Notifikasi':
+        setDialogType('notifikasi');
+        setDialogOpen(true);
+        break;
+      case 'Tema Aplikasi':
+        setDialogType('tema');
+        setDialogOpen(true);
+        break;
+      case 'Bahasa':
+        setDialogType('bahasa');
+        setDialogOpen(true);
+        break;
+      case 'Hapus Akun':
+        setDialogType('hapus-akun');
+        setDialogOpen(true);
+        break;
+      default:
+        toast.success(`Aksi "${action}" berhasil dilakukan`);
+    }
+  };
+
+  const handleDialogSave = () => {
+    switch(dialogType) {
+      case 'edit-profil':
+        toast.success('Profil berhasil diperbarui');
+        break;
+      case 'ubah-password':
+        if (!currentPassword || !newPassword || !confirmPassword) {
+          toast.error('Semua field harus diisi');
+          return;
+        }
+        if (newPassword !== confirmPassword) {
+          toast.error('Password baru dan konfirmasi harus sama');
+          return;
+        }
+        toast.success('Password berhasil diubah');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        break;
+      case 'two-factor':
+        toast.success('Verifikasi dua faktor berhasil diaktifkan');
+        break;
+      case 'recovery':
+        toast.success('Opsi pemulihan akun berhasil diperbarui');
+        break;
+      case 'notifikasi':
+        toast.success('Preferensi notifikasi berhasil diperbarui');
+        break;
+      case 'tema':
+        toast.success('Tema aplikasi berhasil diubah');
+        break;
+      case 'bahasa':
+        toast.success('Bahasa berhasil diubah');
+        break;
+      case 'hapus-akun':
+        toast.error('Fitur ini memerlukan konfirmasi lebih lanjut dan tidak tersedia dalam versi demo');
+        break;
+    }
+    setDialogOpen(false);
+  };
+
+  const renderDialogContent = () => {
+    switch(dialogType) {
+      case 'edit-profil':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Edit Profil</DialogTitle>
+              <DialogDescription>
+                Perbarui informasi profil Anda
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Nama
+                </Label>
+                <Input id="name" defaultValue={profil.nama} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="jabatan" className="text-right">
+                  Jabatan
+                </Label>
+                <Input id="jabatan" defaultValue={profil.jabatan} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="telepon" className="text-right">
+                  Telepon
+                </Label>
+                <Input id="telepon" defaultValue={profil.telepon} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Email
+                </Label>
+                <Input id="email" defaultValue={profil.email} className="col-span-3" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Simpan Perubahan</Button>
+            </DialogFooter>
+          </>
+        );
+      case 'ubah-password':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Ubah Kata Sandi</DialogTitle>
+              <DialogDescription>
+                Masukkan kata sandi lama dan kata sandi baru
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-1 gap-2">
+                <Label htmlFor="current-password">
+                  Kata Sandi Saat Ini
+                </Label>
+                <Input 
+                  id="current-password" 
+                  type="password" 
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                <Label htmlFor="new-password">
+                  Kata Sandi Baru
+                </Label>
+                <Input 
+                  id="new-password" 
+                  type="password" 
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                <Label htmlFor="confirm-password">
+                  Konfirmasi Kata Sandi
+                </Label>
+                <Input 
+                  id="confirm-password" 
+                  type="password" 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Ubah Kata Sandi</Button>
+            </DialogFooter>
+          </>
+        );
+      case 'two-factor':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Verifikasi Dua Faktor</DialogTitle>
+              <DialogDescription>
+                Tingkatkan keamanan akun Anda dengan verifikasi dua faktor
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <p className="mb-4">Aktifkan verifikasi dua faktor untuk meningkatkan keamanan akun Anda. Anda akan diminta kode verifikasi setiap kali masuk.</p>
+              <div className="flex items-center space-x-2">
+                <Switch id="two-factor" />
+                <Label htmlFor="two-factor">Aktifkan verifikasi dua faktor</Label>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Simpan Pengaturan</Button>
+            </DialogFooter>
+          </>
+        );
+      case 'notifikasi':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Preferensi Notifikasi</DialogTitle>
+              <DialogDescription>
+                Sesuaikan bagaimana Anda ingin menerima pemberitahuan
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Notifikasi Email</p>
+                  <p className="text-sm text-muted-foreground">Terima pemberitahuan melalui email</p>
+                </div>
+                <Switch 
+                  checked={emailNotifications} 
+                  onCheckedChange={setEmailNotifications} 
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Notifikasi Aplikasi</p>
+                  <p className="text-sm text-muted-foreground">Terima pemberitahuan dalam aplikasi</p>
+                </div>
+                <Switch 
+                  checked={appNotifications} 
+                  onCheckedChange={setAppNotifications} 
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Pengingat Jadwal</p>
+                  <p className="text-sm text-muted-foreground">Terima pengingat untuk jadwal pemberian obat</p>
+                </div>
+                <Switch defaultChecked />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Peringatan Penting</p>
+                  <p className="text-sm text-muted-foreground">Terima peringatan untuk kondisi pasien yang berisiko</p>
+                </div>
+                <Switch defaultChecked />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Simpan Preferensi</Button>
+            </DialogFooter>
+          </>
+        );
+      case 'tema':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Tema Aplikasi</DialogTitle>
+              <DialogDescription>
+                Pilih tema tampilan yang Anda inginkan
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="border rounded-md p-4 cursor-pointer bg-white">
+                  <div className="h-20 bg-slate-100 rounded mb-2"></div>
+                  <p className="text-center font-medium">Terang</p>
+                </div>
+                <div className="border rounded-md p-4 cursor-pointer">
+                  <div className="h-20 bg-slate-800 rounded mb-2"></div>
+                  <p className="text-center font-medium">Gelap</p>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Terapkan Tema</Button>
+            </DialogFooter>
+          </>
+        );
+      case 'bahasa':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Pilihan Bahasa</DialogTitle>
+              <DialogDescription>
+                Pilih bahasa aplikasi
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 space-y-4">
+              <div className="grid grid-cols-1 gap-2">
+                <div className="flex items-center space-x-2 border p-3 rounded-md cursor-pointer">
+                  <div className="w-6 h-4 bg-red-100"></div>
+                  <span>Bahasa Indonesia</span>
+                </div>
+                <div className="flex items-center space-x-2 border p-3 rounded-md cursor-pointer">
+                  <div className="w-6 h-4 bg-blue-100"></div>
+                  <span>English</span>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button onClick={handleDialogSave}>Simpan Bahasa</Button>
+            </DialogFooter>
+          </>
+        );
+      case 'hapus-akun':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Hapus Akun</DialogTitle>
+              <DialogDescription>
+                Tindakan ini tidak dapat dibatalkan. Akun dan semua data terkait akan dihapus secara permanen.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <div className="bg-red-50 p-4 rounded-md">
+                <p className="text-red-800 font-medium">Peringatan</p>
+                <p className="text-sm text-red-700 mt-1">
+                  Menghapus akun akan menghapus seluruh data pasien yang Anda kelola. Pastikan data telah dicadangkan atau dialihkan ke perawat lain.
+                </p>
+              </div>
+              <div className="mt-4">
+                <Label htmlFor="confirm-delete">Ketik "HAPUS" untuk konfirmasi</Label>
+                <Input id="confirm-delete" className="mt-1" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>Batal</Button>
+              <Button variant="destructive" onClick={handleDialogSave}>Hapus Akun</Button>
+            </DialogFooter>
+          </>
+        );
+      default:
+        return <p>Content not available</p>;
+    }
   };
 
   return (
@@ -206,6 +550,13 @@ const PerawatProfil = () => {
           </Card>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          {renderDialogContent()}
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };
