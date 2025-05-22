@@ -1,13 +1,16 @@
-
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { AlertTriangle, Bell, Heart, LineChart, Users, CheckCircle, User } from 'lucide-react';
+import { toast } from 'sonner';
 
 const PerawatDashboard = () => {
+  const navigate = useNavigate();
+  
   // Dummy data
   const pasienRisiko = [
     { id: 1, nama: 'Budi Santoso', usia: 65, kepatuhan: 45, tekananDarah: '160/95' },
@@ -27,11 +30,51 @@ const PerawatDashboard = () => {
     total: 35
   };
 
+  // Handle "Lihat Detail" button click
+  const handleLihatDetail = (pasienId: number) => {
+    toast.info(`Membuka detail pasien ID: P-${1000 + pasienId}`);
+    navigate(`/perawat/pasien/${pasienId}`);
+  };
+
+  // Handle quick action button clicks
+  const handleAksiCepat = (action: string) => {
+    switch(action) {
+      case 'daftar-pasien':
+        toast.info('Membuka daftar pasien');
+        navigate('/perawat/pasien');
+        break;
+      case 'pengingat':
+        toast.info('Membuka pengingat');
+        navigate('/perawat/pengobatan');
+        break;
+      case 'laporan':
+        toast.info('Membuka laporan');
+        navigate('/perawat/kepatuhan');
+        break;
+      case 'risiko':
+        toast.info('Menampilkan pasien berisiko');
+        // For now we're just showing a toast, in a real app we might filter the current view
+        toast.warning('Menampilkan 5 pasien dengan risiko tertinggi');
+        break;
+      case 'tekanan':
+        toast.info('Membuka data tekanan darah');
+        navigate('/perawat/kepatuhan');
+        break;
+      case 'profil':
+        toast.info('Membuka profil');
+        navigate('/perawat/profil');
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <Layout role="perawat" title="Dashboard Perawat">
       <div className="space-y-6">
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* ... keep existing code (overview cards section) */}
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -123,7 +166,12 @@ const PerawatDashboard = () => {
                           Usia: {pasien.usia} tahun | ID: P-{1000 + pasien.id}
                         </p>
                       </div>
-                      <Button size="sm">Lihat Detail</Button>
+                      <Button 
+                        size="sm" 
+                        onClick={() => handleLihatDetail(pasien.id)}
+                      >
+                        Lihat Detail
+                      </Button>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4 mt-4">
@@ -144,14 +192,24 @@ const PerawatDashboard = () => {
                     </div>
                     
                     <div className="mt-4 flex space-x-2">
-                      <Button size="sm" variant="outline">Hubungi Pasien</Button>
-                      <Button size="sm" variant="outline">Atur Pengingat</Button>
-                      <Button size="sm" variant="outline">Catat Evaluasi</Button>
+                      <Button size="sm" variant="outline" onClick={() => toast.info(`Menghubungi pasien: ${pasien.nama}`)}>
+                        Hubungi Pasien
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => toast.info(`Mengatur pengingat untuk: ${pasien.nama}`)}>
+                        Atur Pengingat
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => toast.info(`Mencatat evaluasi untuk: ${pasien.nama}`)}>
+                        Catat Evaluasi
+                      </Button>
                     </div>
                   </div>
                 ))}
                 
-                <Button variant="outline" className="w-full">
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => navigate('/perawat/pasien?filter=risiko')}
+                >
                   Lihat Semua Pasien Berisiko
                 </Button>
               </div>
@@ -179,14 +237,23 @@ const PerawatDashboard = () => {
                           </div>
                         </div>
                       </div>
-                      <Button size="sm" variant="ghost">
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={() => handleLihatDetail(pasien.id)}
+                      >
                         <span className="sr-only">Lihat profil</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
                       </Button>
                     </div>
                   ))}
                 </div>
-                <Button variant="ghost" size="sm" className="w-full mt-4">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="w-full mt-4"
+                  onClick={() => navigate('/perawat/pasien')}
+                >
                   Lihat Semua Pasien
                 </Button>
               </CardContent>
@@ -239,27 +306,51 @@ const PerawatDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-              <Button variant="outline" className="h-auto flex-col py-4 gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto flex-col py-4 gap-2"
+                onClick={() => handleAksiCepat('daftar-pasien')}
+              >
                 <Users className="h-5 w-5" />
                 <span className="text-xs">Daftar Pasien</span>
               </Button>
-              <Button variant="outline" className="h-auto flex-col py-4 gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto flex-col py-4 gap-2"
+                onClick={() => handleAksiCepat('pengingat')}
+              >
                 <Bell className="h-5 w-5" />
                 <span className="text-xs">Pengingat</span>
               </Button>
-              <Button variant="outline" className="h-auto flex-col py-4 gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto flex-col py-4 gap-2"
+                onClick={() => handleAksiCepat('laporan')}
+              >
                 <LineChart className="h-5 w-5" />
                 <span className="text-xs">Laporan</span>
               </Button>
-              <Button variant="outline" className="h-auto flex-col py-4 gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto flex-col py-4 gap-2"
+                onClick={() => handleAksiCepat('risiko')}
+              >
                 <AlertTriangle className="h-5 w-5" />
                 <span className="text-xs">Risiko</span>
               </Button>
-              <Button variant="outline" className="h-auto flex-col py-4 gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto flex-col py-4 gap-2"
+                onClick={() => handleAksiCepat('tekanan')}
+              >
                 <Heart className="h-5 w-5" />
                 <span className="text-xs">Data Tekanan</span>
               </Button>
-              <Button variant="outline" className="h-auto flex-col py-4 gap-2">
+              <Button 
+                variant="outline" 
+                className="h-auto flex-col py-4 gap-2"
+                onClick={() => handleAksiCepat('profil')}
+              >
                 <User className="h-5 w-5" />
                 <span className="text-xs">Profil</span>
               </Button>

@@ -22,6 +22,7 @@ import PasienProfil from "./pages/pasien/Profil";
 // Perawat Pages
 import PerawatDashboard from "./pages/perawat/Dashboard";
 import PerawatPasien from "./pages/perawat/Pasien";
+import PerawatPasienDetail from "./pages/perawat/PasienDetail"; // Add new import
 import PerawatPengobatan from "./pages/perawat/Pengobatan";
 import PerawatKepatuhan from "./pages/perawat/Kepatuhan";
 import PerawatProfil from "./pages/perawat/Profil";
@@ -58,6 +59,7 @@ const App = () => (
             {/* Perawat Routes */}
             <Route path="/perawat/dashboard" element={<PerawatDashboard />} />
             <Route path="/perawat/pasien" element={<PerawatPasien />} />
+            <Route path="/perawat/pasien/:id" element={<PerawatPasienDetail />} /> {/* Add new route */}
             <Route path="/perawat/pengobatan" element={<PerawatPengobatan />} />
             <Route path="/perawat/kepatuhan" element={<PerawatKepatuhan />} />
             <Route path="/perawat/profil" element={<PerawatProfil />} />
