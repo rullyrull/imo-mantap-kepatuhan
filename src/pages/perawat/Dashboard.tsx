@@ -203,7 +203,7 @@ const PerawatDashboard = () => {
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between mb-1">
-                      <span>Kepatuhan Tinggi (>80%)</span>
+                      <span>Kepatuhan Tinggi (&gt;80%)</span>
                       <span className="font-medium">{rekapKepatuhan.tinggi}</span>
                     </div>
                     <Progress value={(rekapKepatuhan.tinggi / rekapKepatuhan.total) * 100} className="h-2 bg-slate-100" />
@@ -217,7 +217,7 @@ const PerawatDashboard = () => {
                   </div>
                   <div>
                     <div className="flex justify-between mb-1">
-                      <span>Kepatuhan Rendah (<50%)</span>
+                      <span>Kepatuhan Rendah (&lt;50%)</span>
                       <span className="font-medium">{rekapKepatuhan.rendah}</span>
                     </div>
                     <Progress value={(rekapKepatuhan.rendah / rekapKepatuhan.total) * 100} className="h-2 bg-slate-100" />
