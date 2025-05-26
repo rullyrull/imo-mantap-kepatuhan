@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import {
   User, Heart, Pill, Calendar, Clock, Phone, 
   AlertTriangle, CheckCircle, LineChart, Plus,
-  Bell
+  Bell, Mail
 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
