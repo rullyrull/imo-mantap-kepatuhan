@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 type UserRole = 'pasien' | 'perawat' | 'admin';
 
@@ -13,27 +14,27 @@ const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<UserRole>('pasien');
-  const { login, isLoading } = useAuth();
+  const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Demo login logic - in a real app, this would validate with a backend
     if (email && password) {
-      await login(email, password, role);
+      // Simulate login success
+      toast.success('Login berhasil');
+      
+      // Navigate based on role
+      if (role === 'pasien') {
+        navigate('/pasien/dashboard');
+      } else if (role === 'perawat') {
+        navigate('/perawat/dashboard');
+      } else if (role === 'admin') {
+        navigate('/admin/dashboard');
+      }
+    } else {
+      toast.error('Harap isi email dan password');
     }
-  };
-
-  const handleDemoLogin = (demoRole: UserRole) => {
-    const demoCredentials = {
-      pasien: { email: 'pasien@test.com', password: 'password' },
-      perawat: { email: 'perawat@test.com', password: 'password' },
-      admin: { email: 'admin@test.com', password: 'password' }
-    };
-
-    const creds = demoCredentials[demoRole];
-    setEmail(creds.email);
-    setPassword(creds.password);
-    setRole(demoRole);
   };
 
   return (
@@ -51,18 +52,7 @@ const LoginForm = () => {
             <TabsTrigger value="perawat">Perawat</TabsTrigger>
             <TabsTrigger value="admin">Admin</TabsTrigger>
           </TabsList>
-          
           <TabsContent value="pasien" className="mt-4">
-            <div className="space-y-3 mb-4">
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="w-full text-xs"
-                onClick={() => handleDemoLogin('pasien')}
-              >
-                Demo Login Pasien (pasien@test.com / password)
-              </Button>
-            </div>
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -90,23 +80,10 @@ const LoginForm = () => {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Masuk...' : 'Masuk'}
-              </Button>
+              <Button type="submit" className="w-full">Masuk</Button>
             </form>
           </TabsContent>
-          
           <TabsContent value="perawat" className="mt-4">
-            <div className="space-y-3 mb-4">
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="w-full text-xs"
-                onClick={() => handleDemoLogin('perawat')}
-              >
-                Demo Login Perawat (perawat@test.com / password)
-              </Button>
-            </div>
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="perawat-email">Email</Label>
@@ -134,23 +111,10 @@ const LoginForm = () => {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Masuk...' : 'Masuk'}
-              </Button>
+              <Button type="submit" className="w-full">Masuk</Button>
             </form>
           </TabsContent>
-          
           <TabsContent value="admin" className="mt-4">
-            <div className="space-y-3 mb-4">
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="w-full text-xs"
-                onClick={() => handleDemoLogin('admin')}
-              >
-                Demo Login Admin (admin@test.com / password)
-              </Button>
-            </div>
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="admin-email">Email</Label>
@@ -178,9 +142,7 @@ const LoginForm = () => {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Masuk...' : 'Masuk'}
-              </Button>
+              <Button type="submit" className="w-full">Masuk</Button>
             </form>
           </TabsContent>
         </Tabs>

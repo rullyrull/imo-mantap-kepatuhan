@@ -15,7 +15,6 @@ import {
   Settings, 
   Menu
 } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
 
 type SidebarProps = {
   role: 'pasien' | 'perawat' | 'admin';
@@ -26,7 +25,6 @@ type SidebarProps = {
 const Sidebar = ({ role, isMobile = false, onClose }: SidebarProps) => {
   const location = useLocation();
   const [activePath, setActivePath] = useState('');
-  const { logout } = useAuth();
 
   useEffect(() => {
     setActivePath(location.pathname);
@@ -62,11 +60,6 @@ const Sidebar = ({ role, isMobile = false, onClose }: SidebarProps) => {
     pasien: 'Pasien',
     perawat: 'Perawat',
     admin: 'Administrator',
-  };
-
-  const handleLogout = () => {
-    logout();
-    if (onClose) onClose();
   };
 
   return (
@@ -121,8 +114,10 @@ const Sidebar = ({ role, isMobile = false, onClose }: SidebarProps) => {
       </div>
       
       <div className="p-4 border-t">
-        <Button variant="outline" className="w-full" onClick={handleLogout}>
-          Keluar
+        <Button variant="outline" className="w-full" asChild>
+          <Link to="/login">
+            Keluar
+          </Link>
         </Button>
       </div>
     </div>

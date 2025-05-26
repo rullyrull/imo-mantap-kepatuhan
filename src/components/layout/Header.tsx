@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 type HeaderProps = {
   onMenuClick: () => void;
@@ -21,11 +21,17 @@ type HeaderProps = {
 
 const Header = ({ onMenuClick, title, role }: HeaderProps) => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
   const [notifications] = useState(role === 'pasien' ? 3 : role === 'perawat' ? 5 : 0);
 
   const handleLogout = () => {
-    logout();
+    toast.success('Berhasil keluar dari sistem');
+    navigate('/login');
+  };
+
+  const userName = {
+    'pasien': 'Budi Santoso',
+    'perawat': 'Ns. Ratna Dewi',
+    'admin': 'Admin Sistem'
   };
 
   return (
@@ -98,7 +104,7 @@ const Header = ({ onMenuClick, title, role }: HeaderProps) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{user?.nama || 'User'}</DropdownMenuLabel>
+              <DropdownMenuLabel>{userName[role]}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => navigate(`/${role}/profil`)}>
                 Profil
