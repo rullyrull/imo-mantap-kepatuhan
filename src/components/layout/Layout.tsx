@@ -5,6 +5,7 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { useAuth } from '@/hooks/useAuth';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -16,11 +17,18 @@ const Layout = ({ children, role, title }: LayoutProps) => {
   const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    // In a real app, verify authentication here
-    // For now, we'll assume the user is authenticated
-  }, [navigate]);
+    // Redirect if user is not authenticated or role doesn't match
+    if (!user || user.role !== role) {
+      navigate('/login');
+    }
+  }, [user, role, navigate]);
+
+  if (!user || user.role !== role) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
